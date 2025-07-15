@@ -1,0 +1,355 @@
+{
+  "name": "06_Merge_Combinar_Datos",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "notes": "Iniciamos el workflow para demostrar cómo el nodo Merge combina datos de múltiples fuentes"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "fuente",
+              "value": "Base de Datos de Clientes"
+            }
+          ]
+        }
+      },
+      "id": "preparar-datos",
+      "name": "Preparar Datos",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [460, 300],
+      "notes": "Preparamos los datos iniciales que se dividirán en múltiples rutas"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "id_cliente",
+              "value": "001"
+            },
+            {
+              "name": "nombre",
+              "value": "Juan Pérez"
+            },
+            {
+              "name": "email",
+              "value": "juan.perez@email.com"
+            }
+          ]
+        }
+      },
+      "id": "datos-cliente",
+      "name": "Datos del Cliente",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [680, 180],
+      "notes": "Ruta 1: Obtenemos información básica del cliente"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "id_cliente",
+              "value": "001"
+            },
+            {
+              "name": "ultima_compra",
+              "value": "2024-01-15"
+            },
+            {
+              "name": "total_gastado",
+              "value": "1,299.99"
+            }
+          ]
+        }
+      },
+      "id": "datos-ventas",
+      "name": "Datos de Ventas",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [680, 300],
+      "notes": "Ruta 2: Obtenemos información de ventas del cliente"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "id_cliente",
+              "value": "001"
+            },
+            {
+              "name": "producto_favorito",
+              "value": "Laptops"
+            },
+            {
+              "name": "categoria_preferida",
+              "value": "Electrónicos"
+            }
+          ]
+        }
+      },
+      "id": "datos-preferencias",
+      "name": "Datos de Preferencias",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [680, 420],
+      "notes": "Ruta 3: Obtenemos información de preferencias del cliente"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "merge-datos",
+      "name": "Merge - Combinar Datos",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [900, 300],
+      "notes": "El nodo Merge combina los datos de las tres rutas en un solo objeto. Modo 'Combine' une campos de diferentes fuentes."
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "perfil_completo",
+              "value": "Cliente: {{$json.nombre}} ({{$json.email}}) - Última compra: {{$json.ultima_compra}} - Total gastado: ${{$json.total_gastado}} - Prefiere: {{$json.categoria_preferida}}"
+            },
+            {
+              "name": "segmento",
+              "value": "={{$json.total_gastado > 1000 ? 'Premium' : 'Estándar'}}"
+            }
+          ]
+        }
+      },
+      "id": "crear-perfil",
+      "name": "Crear Perfil Completo",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [1120, 300],
+      "notes": "Usamos todos los datos combinados para crear un perfil completo del cliente"
+    },
+    {
+      "parameters": {},
+      "id": "start-2",
+      "name": "Start 2",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [240, 600],
+      "notes": "Segundo ejemplo: Merge con modo 'Append' para demostrar diferentes formas de combinar datos"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "tipo",
+              "value": "Pedido"
+            },
+            {
+              "name": "id",
+              "value": "PED-001"
+            }
+          ]
+        }
+      },
+      "id": "datos-pedido-1",
+      "name": "Pedido 1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [460, 540],
+      "notes": "Primer pedido para demostrar el modo 'Append'"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "tipo",
+              "value": "Pedido"
+            },
+            {
+              "name": "id",
+              "value": "PED-002"
+            }
+          ]
+        }
+      },
+      "id": "datos-pedido-2",
+      "name": "Pedido 2",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [460, 660],
+      "notes": "Segundo pedido para demostrar el modo 'Append'"
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "merge-append",
+      "name": "Merge - Append",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [680, 600],
+      "notes": "El nodo Merge en modo 'Append' combina los items de ambas rutas en una sola lista. Útil para consolidar listas."
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "resumen",
+              "value": "Se procesaron {{$items.length}} pedidos en total"
+            }
+          ]
+        }
+      },
+      "id": "contar-pedidos",
+      "name": "Contar Pedidos",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [900, 600],
+      "notes": "Usamos $items.length para contar cuántos pedidos se combinaron"
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Preparar Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Datos": {
+      "main": [
+        [
+          {
+            "node": "Datos del Cliente",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Datos de Ventas",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Datos de Preferencias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Datos del Cliente": {
+      "main": [
+        [
+          {
+            "node": "Merge - Combinar Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Datos de Ventas": {
+      "main": [
+        [
+          {
+            "node": "Merge - Combinar Datos",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Datos de Preferencias": {
+      "main": [
+        [
+          {
+            "node": "Merge - Combinar Datos",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge - Combinar Datos": {
+      "main": [
+        [
+          {
+            "node": "Crear Perfil Completo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start 2": {
+      "main": [
+        [
+          {
+            "node": "Pedido 1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Pedido 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pedido 1": {
+      "main": [
+        [
+          {
+            "node": "Merge - Append",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pedido 2": {
+      "main": [
+        [
+          {
+            "node": "Merge - Append",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge - Append": {
+      "main": [
+        [
+          {
+            "node": "Contar Pedidos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
