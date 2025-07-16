@@ -1,0 +1,301 @@
+{
+  "name": "📊 Sistema de Registro de Usuarios con Google Sheets",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "registro-usuario",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "🎯 Webhook - Registro",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "id": "webhook-registro"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "nombre",
+              "value": "={{ $json.nombre ? $json.nombre.toString().trim() : '' }}"
+            },
+            {
+              "name": "email",
+              "value": "={{ $json.email ? $json.email.toString().toLowerCase().trim() : '' }}"
+            },
+            {
+              "name": "telefono",
+              "value": "={{ $json.telefono ? $json.telefono.toString().trim() : '' }}"
+            },
+            {
+              "name": "empresa",
+              "value": "={{ $json.empresa ? $json.empresa.toString().trim() : 'No especificada' }}"
+            },
+            {
+              "name": "fecha_registro",
+              "value": "={{ new Date().toISOString().split('T')[0] }}"
+            },
+            {
+              "name": "hora_registro",
+              "value": "={{ new Date().toLocaleTimeString('es-ES') }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ new Date().toISOString() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "🔄 Limpiar Datos",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "id": "limpiar-datos"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validar datos de entrada\nconst datos = $json;\nconst errores = [];\n\n// Validar nombre\nif (!datos.nombre || datos.nombre.length < 2) {\n  errores.push('Nombre debe tener al menos 2 caracteres');\n}\n\n// Validar email\nconst emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\nif (!datos.email || !emailRegex.test(datos.email)) {\n  errores.push('Email inválido');\n}\n\n// Validar teléfono\nif (!datos.telefono || datos.telefono.length < 10) {\n  errores.push('Teléfono debe tener al menos 10 dígitos');\n}\n\n// Verificar si hay errores\nif (errores.length > 0) {\n  return {\n    json: {\n      valido: false,\n      errores: errores,\n      mensaje: 'Datos inválidos: ' + errores.join(', ')\n    }\n  };\n}\n\n// Si todo está bien\nreturn {\n  json: {\n    ...datos,\n    valido: true,\n    id_usuario: 'USER_' + Date.now(),\n    estado: 'Activo'\n  }\n};"
+      },
+      "name": "✅ Validar Datos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        600,
+        300
+      ],
+      "id": "validar-datos"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.valido }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "🎯 ¿Datos Válidos?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        800,
+        300
+      ],
+      "id": "check-validos"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "append",
+        "documentId": "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms",
+        "sheetName": "Usuarios",
+        "range": "A:H",
+        "options": {
+          "valueInputMode": "USER_ENTERED"
+        }
+      },
+      "name": "📊 Guardar en Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        200
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "google-sheets-creds",
+          "name": "Google Sheets - Producción"
+        }
+      },
+      "id": "guardar-sheets"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "email_destino",
+              "value": "={{ $json.email }}"
+            },
+            {
+              "name": "asunto",
+              "value": "¡Bienvenido {{ $json.nombre }}!"
+            },
+            {
+              "name": "mensaje",
+              "value": "Hola {{ $json.nombre }},\\n\\nGracias por registrarte en nuestro sistema.\\n\\nTus datos han sido guardados correctamente:\\n- Email: {{ $json.email }}\\n- Teléfono: {{ $json.telefono }}\\n- Empresa: {{ $json.empresa }}\\n- Fecha de registro: {{ $json.fecha_registro }}\\n\\n¡Esperamos verte pronto!\\n\\nSaludos,\\nEl equipo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "📧 Preparar Email Bienvenida",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        200
+      ],
+      "id": "preparar-email"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"success\": true,\n  \"message\": \"Usuario registrado exitosamente\",\n  \"data\": {\n    \"id_usuario\": $json.id_usuario,\n    \"nombre\": $json.nombre,\n    \"email\": $json.email,\n    \"fecha_registro\": $json.fecha_registro\n  }\n} }}"
+      },
+      "name": "✅ Respuesta Exitosa",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        200
+      ],
+      "id": "respuesta-exitosa"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"success\": false,\n  \"message\": $json.mensaje,\n  \"errors\": $json.errores\n} }}",
+        "responseCode": 400
+      },
+      "name": "❌ Respuesta Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        400
+      ],
+      "id": "respuesta-error"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "admin_email",
+              "value": "admin@empresa.com"
+            },
+            {
+              "name": "asunto",
+              "value": "Error en Registro de Usuario"
+            },
+            {
+              "name": "mensaje",
+              "value": "Se intentó registrar un usuario con datos inválidos:\\n\\nErrores encontrados:\\n{{ $json.errores.join('\\n- ') }}\\n\\nDatos recibidos:\\n{{ JSON.stringify($json, null, 2) }}\\n\\nFecha: {{ new Date().toISOString() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "🚨 Notificar Error Admin",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        400
+      ],
+      "id": "notificar-error"
+    }
+  ],
+  "connections": {
+    "🎯 Webhook - Registro": {
+      "main": [
+        [
+          {
+            "node": "🔄 Limpiar Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔄 Limpiar Datos": {
+      "main": [
+        [
+          {
+            "node": "✅ Validar Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ Validar Datos": {
+      "main": [
+        [
+          {
+            "node": "🎯 ¿Datos Válidos?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎯 ¿Datos Válidos?": {
+      "main": [
+        [
+          {
+            "node": "📊 Guardar en Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "❌ Respuesta Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📊 Guardar en Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "📧 Preparar Email Bienvenida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📧 Preparar Email Bienvenida": {
+      "main": [
+        [
+          {
+            "node": "✅ Respuesta Exitosa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "❌ Respuesta Error": {
+      "main": [
+        [
+          {
+            "node": "🚨 Notificar Error Admin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
