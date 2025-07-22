@@ -1,0 +1,8 @@
+{
+  "description": "Patrón para cachear resultados y evitar llamadas repetidas a APIs en n8n.",
+  "steps": [
+    "Consultar datos en caché",
+    "Si no existe, llamar a la API",
+    "Guardar resultado en caché"
+  ]
+}
