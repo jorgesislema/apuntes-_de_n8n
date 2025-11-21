@@ -1,211 +1,174 @@
-# Guía de Contribución
+# Guía de Contribución Técnica
 
-## Proceso de Contribución al Proyecto
+## Introducción
 
-Este documento describe los estándares técnicos y procesos para contribuir a la documentación y recursos de n8n.
+Esta guía establece los estándares técnicos y metodológicos para contribuir a la n8n Referencia Técnica. Seguir estas directrices garantiza la consistencia, calidad y valor técnico del contenido.
 
-## 1. Estándares de Código
+## Estándares de Documentación
 
-### 1.1 Formato de Código
-```typescript
-// Configuración de ESLint
-module.exports = {
-    parser: '@typescript-eslint/parser',
-    extends: [
-        'eslint:recommended',
-        'plugin:@typescript-eslint/recommended'
-    ],
-    rules: {
-        'indent': ['error', 4],
-        'quotes': ['error', 'single'],
-        'semi': ['error', 'always']
-    }
-};
+### Estructura de Artículos Técnicos
 
-// Configuración de Prettier
-module.exports = {
-    printWidth: 80,
-    tabWidth: 4,
-    useTabs: false,
-    semi: true,
-    singleQuote: true,
-    trailingComma: 'es5'
-};
+Cada documento debe seguir esta estructura estandarizada:
+
+1. **Definición Técnica**
+   - Propósito y funcionalidad específica
+   - Parámetros de configuración disponibles
+   - Compatibilidad con versiones de n8n
+
+2. **Análisis de Rendimiento**
+   - Ventajas técnicas y casos de uso óptimos
+   - Limitaciones conocidas y escenarios problemáticos
+   - Métricas de rendimiento esperadas
+
+3. **Implementación Práctica**
+   - Ejemplos de código funcional y ejecutable
+   - Configuraciones de producción validadas
+   - Consideraciones de escalabilidad
+
+### Formato de Código
+
+**JavaScript/TypeScript**
+```javascript
+// Documentar propósito específico
+function procesarDatos(input) {
+    // Implementación clara y eficiente
+    return resultado;
+}
 ```
 
-### 1.2 Convenciones de Nombrado
-```typescript
-// Nombres de Clases: PascalCase
-class DataTransformer {
-    // Propiedades privadas: camelCase con _
-    private _config: Configuration;
-    
-    // Métodos públicos: camelCase
-    public transformData(): void {
-        // Implementación
-    }
-}
+**Workflows JSON**
+- Incluir metadatos de versión
+- Documentar cada nodo con comentarios
+- Validar funcionalidad antes de envío
 
-// Interfaces: PascalCase con I prefijo
-interface INodeConfig {
-    name: string;
-    type: string;
-}
+### Estándares de Calidad
 
-// Enums: PascalCase
-enum HttpMethod {
-    GET = 'GET',
-    POST = 'POST'
-}
+**Documentación Técnica**
+- Sin emojis o elementos visuales no esenciales
+- Terminología técnica precisa y consistente
+- Referencias a documentación oficial cuando sea relevante
 
-// Constantes: SNAKE_CASE mayúsculas
-const MAX_RETRY_ATTEMPTS = 3;
-```
+**Ejemplos de Código**
+- Código funcional y probado
+- Manejo de errores implementado
+- Comentarios explicativos donde sea necesario
 
-## 2. Proceso de Pull Request
+## Proceso de Contribución
 
-### 2.1 Checklist de PR
-```markdown
-- [ ] Código sigue los estándares establecidos
-- [ ] Tests agregados/actualizados
-- [ ] Documentación actualizada
-- [ ] Changelog actualizado
-- [ ] Revisión de seguridad completada
-```
+### 1. Preparación
 
-### 2.2 Estructura de Commits
+**Fork del Repositorio**
 ```bash
-# Formato de commit
-<tipo>(<alcance>): <descripción>
-
-# Tipos válidos:
-# feat: Nueva característica
-# fix: Corrección de bug
-# docs: Cambios en documentación
-# style: Cambios de formato
-# refactor: Refactorización de código
-# test: Adición/modificación de tests
-# chore: Cambios en build/tools
-
-# Ejemplo:
-feat(nodos): implementar nuevo nodo HTTP con retry
+git clone https://github.com/[tu-usuario]/n8n-referencia-tecnica
+cd n8n-referencia-tecnica
+git checkout -b feature/nueva-documentacion
 ```
 
-## 3. Testing
+### 2. Desarrollo
 
-### 3.1 Unit Tests
-```typescript
-describe('DataTransformer', () => {
-    let transformer: DataTransformer;
-    
-    beforeEach(() => {
-        transformer = new DataTransformer();
-    });
-    
-    test('should transform data correctly', () => {
-        const input = { raw: 'data' };
-        const expected = { processed: 'data' };
-        
-        expect(transformer.transform(input)).toEqual(expected);
-    });
-});
+**Estructura de Commits**
+```
+tipo(scope): descripción técnica concisa
+
+- Detalle específico de cambios
+- Impacto en funcionalidad existente
+- Referencias a issues relacionados
 ```
 
-### 3.2 Integration Tests
-```typescript
-describe('NodeIntegration', () => {
-    test('should integrate with external service', async () => {
-        const node = new ExternalServiceNode();
-        const result = await node.execute();
-        
-        expect(result).toMatchSchema(responseSchema);
-    });
-});
-```
+**Tipos de commit válidos:**
+- `docs`: Documentación técnica
+- `feat`: Nueva funcionalidad o contenido
+- `fix`: Corrección de errores
+- `refactor`: Reestructuración de contenido
+- `test`: Validación de workflows
 
-## 4. Documentación
+### 3. Validación
 
-### 4.1 Documentación de Código
-```typescript
-/**
- * Procesa datos según la configuración especificada.
- * 
- * @param {INodeExecutionData[]} items - Items a procesar
- * @param {ProcessingOptions} options - Opciones de procesamiento
- * @returns {Promise<INodeExecutionData[]>} Items procesados
- * @throws {ProcessingError} Si ocurre un error durante el procesamiento
- * 
- * @example
- * const processor = new DataProcessor();
- * const result = await processor.process(items, {
- *     batch: true,
- *     maxRetries: 3
- * });
- */
-async process(
-    items: INodeExecutionData[],
-    options: ProcessingOptions
-): Promise<INodeExecutionData[]> {
-    // Implementación
-}
-```
+**Checklist Pre-Envío**
+- [ ] Código funcional ejecutado en n8n
+- [ ] Documentación sigue estructura estandarizada
+- [ ] Sin emojis o elementos visuales innecesarios
+- [ ] Análisis de ventajas/desventajas incluido
+- [ ] Métricas de rendimiento documentadas
 
-### 4.2 README Template
-```markdown
-# Nombre del Componente
+### 4. Pull Request
 
-## Descripción
-Descripción técnica detallada del componente.
+**Información Requerida**
+- Descripción técnica del cambio
+- Casos de uso específicos
+- Impacto en performance
+- Evidencia de testing
 
-## Instalación
-```bash
-npm install @n8n/component
-```
+## Áreas de Contribución
 
-## Uso
-```typescript
-import { Component } from '@n8n/component';
+### Documentación Técnica
+- Análisis detallado de nodos
+- Patrones de arquitectura empresarial
+- Guías de optimización específicas
 
-const component = new Component();
-await component.initialize();
-```
+### Plantillas de Workflow
+- Implementaciones de producción probadas
+- Patrones de integración complejos
+- Soluciones de monitoreo y alertas
 
-## API
-Documentación detallada de la API.
+### Herramientas y Scripts
+- Utilidades de debugging
+- Scripts de deployment automatizado
+- Herramientas de análisis de performance
 
-## Tests
-```bash
-npm run test
-```
+## Criterios de Revisión
 
-## Contribución
-Instrucciones para contribuir.
-```
+### Técnico
+- Precisión de implementación
+- Eficiencia de solución propuesta
+- Escalabilidad de enfoque
 
-## 5. Seguridad
+### Documental
+- Claridad de explicación técnica
+- Completitud de información
+- Adherencia a estándares
 
-### 5.1 Revisión de Seguridad
-```typescript
-interface SecurityChecklist {
-    inputValidation: boolean;
-    authentication: boolean;
-    authorization: boolean;
-    dataEncryption: boolean;
-    secureComms: boolean;
-    errorHandling: boolean;
-    logging: boolean;
-}
+### Valor Empresarial
+- Aplicabilidad en entornos de producción
+- Solución a problemas reales
+- Impacto en productividad
 
-class SecurityReview {
-    static validatePR(checklist: SecurityChecklist): boolean {
-        return Object.values(checklist).every(check => check);
-    }
-}
-```
+## Herramientas Recomendadas
 
-## Referencias
+### Desarrollo
+- **Editor:** VS Code con extensión n8n
+- **Testing:** n8n Desktop para validación
+- **Versionado:** Git con conventional commits
 
-- [TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html)
-- [Jest Testing Framework](https://jestjs.io/)
-- [Conventional Commits](https://www.conventionalcommits.org/)
-- [Security Best Practices](https://owasp.org/www-project-top-ten/)
+### Documentación
+- **Formato:** Markdown estándar
+- **Diagramas:** Mermaid para arquitecturas
+- **Capturas:** Solo cuando aporten valor técnico específico
+
+## Política de Mantenimiento
+
+### Actualizaciones
+- Revisión trimestral de contenido obsoleto
+- Actualización con nuevas versiones de n8n
+- Validación continua de ejemplos de código
+
+### Deprecación
+- Notificación con 30 días de antelación
+- Migración de contenido a nuevas implementaciones
+- Archivo histórico de versiones anteriores
+
+## Contacto de Mantenedores
+
+Para consultas técnicas específicas o clarificaciones sobre contribuciones:
+
+1. **Issues de GitHub:** Utilizar etiquetas apropiadas
+2. **Discussions:** Para propuestas de mejora arquitectónica
+3. **Pull Requests:** Para contribuciones directas
+
+## Reconocimientos
+
+Las contribuciones técnicas significativas serán reconocidas en la documentación del proyecto, incluyendo:
+
+- Autoría de secciones específicas
+- Créditos en plantillas de workflow
+- Referencias en casos de estudio empresariales
