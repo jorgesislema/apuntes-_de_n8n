@@ -1,0 +1,8 @@
+{
+  "description": "Ejemplo de workflow para procesar un archivo CSV grande en n8n usando nodos eficientes y manejo de memoria.",
+  "steps": [
+    "Leer archivo CSV en bloques",
+    "Procesar cada bloque con nodo Code o Set",
+    "Guardar resultados en base de datos o Google Sheets"
+  ]
+}
