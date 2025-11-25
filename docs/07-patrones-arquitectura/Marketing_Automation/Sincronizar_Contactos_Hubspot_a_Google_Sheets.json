@@ -1,0 +1,8 @@
+{
+  "description": "Workflow para sincronizar contactos de Hubspot a Google Sheets automáticamente.",
+  "steps": [
+    "Obtener contactos de Hubspot",
+    "Formatear datos",
+    "Insertar en Google Sheets"
+  ]
+}
