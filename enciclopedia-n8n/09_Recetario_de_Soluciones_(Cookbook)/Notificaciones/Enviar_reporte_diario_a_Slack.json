@@ -1,8 +1,0 @@
-{
-  "description": "Workflow para enviar un reporte diario a un canal de Slack usando n8n.",
-  "steps": [
-    "Obtener datos del día",
-    "Formatear mensaje",
-    "Enviar a Slack"
-  ]
-}
