@@ -1,8 +1,0 @@
-{
-  "description": "Workflow que implementa un patrón de test unitario para validar otros workflows en n8n.",
-  "steps": [
-    "Preparar datos de prueba",
-    "Ejecutar workflow objetivo",
-    "Validar resultados"
-  ]
-}
