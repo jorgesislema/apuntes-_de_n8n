@@ -1,8 +1,0 @@
-{
-  "description": "Estrategias para evitar ser bloqueado por límites de APIs usando n8n.",
-  "steps": [
-    "Detectar límites de la API",
-    "Implementar esperas y reintentos",
-    "Monitorear respuestas de error"
-  ]
-}
