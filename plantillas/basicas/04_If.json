@@ -1,0 +1,253 @@
+{
+  "name": "04_Nodo_If_Toma_Decisiones",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "notes": "Iniciamos el workflow para demostrar cómo funciona el nodo IF"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "nombre",
+              "value": "María"
+            },
+            {
+              "name": "email",
+              "value": "maria@empresa.com"
+            }
+          ],
+          "number": [
+            {
+              "name": "edad",
+              "value": 28
+            },
+            {
+              "name": "puntuacion",
+              "value": 85
+            }
+          ]
+        }
+      },
+      "id": "datos-usuario",
+      "name": "Datos del Usuario",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [460, 300],
+      "notes": "Creamos datos de ejemplo para evaluarlos con el nodo IF"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$json.puntuacion}}",
+              "operation": "largerEqual",
+              "value2": 80
+            }
+          ]
+        }
+      },
+      "id": "verificar-puntuacion",
+      "name": "¿Puntuación ≥ 80?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [680, 300],
+      "notes": "El nodo IF evalúa si la puntuación es mayor o igual a 80. Si es verdadero, va por el puerto 'true', si no, por el puerto 'false'."
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "resultado",
+              "value": "¡Excelente! {{$json.nombre}} tiene una puntuación de {{$json.puntuacion}}. Cumple con los requisitos."
+            },
+            {
+              "name": "estado",
+              "value": "APROBADO"
+            }
+          ]
+        }
+      },
+      "id": "mensaje-aprobado",
+      "name": "Usuario Aprobado",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [900, 180],
+      "notes": "Este nodo se ejecuta solo si la condición es VERDADERA (puntuación ≥ 80)"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "resultado",
+              "value": "{{$json.nombre}} tiene una puntuación de {{$json.puntuacion}}. Necesita mejorar para cumplir los requisitos."
+            },
+            {
+              "name": "estado",
+              "value": "RECHAZADO"
+            }
+          ]
+        }
+      },
+      "id": "mensaje-rechazado",
+      "name": "Usuario Rechazado",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [900, 420],
+      "notes": "Este nodo se ejecuta solo si la condición es FALSA (puntuación < 80)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.estado}}",
+              "value2": "APROBADO"
+            }
+          ]
+        }
+      },
+      "id": "verificar-estado",
+      "name": "¿Estado = APROBADO?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1120, 300],
+      "notes": "Segundo nodo IF que demuestra cómo se pueden encadenar condiciones"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "accion",
+              "value": "Enviar email de bienvenida a {{$json.nombre}}"
+            },
+            {
+              "name": "siguiente_paso",
+              "value": "Programar entrevista"
+            }
+          ]
+        }
+      },
+      "id": "acciones-aprobado",
+      "name": "Acciones para Aprobado",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [1340, 180],
+      "notes": "Acciones específicas para usuarios aprobados"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "accion",
+              "value": "Enviar email de retroalimentación a {{$json.nombre}}"
+            },
+            {
+              "name": "siguiente_paso",
+              "value": "Ofrecer curso de mejora"
+            }
+          ]
+        }
+      },
+      "id": "acciones-rechazado",
+      "name": "Acciones para Rechazado",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [1340, 420],
+      "notes": "Acciones específicas para usuarios rechazados"
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Datos del Usuario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Datos del Usuario": {
+      "main": [
+        [
+          {
+            "node": "¿Puntuación ≥ 80?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Puntuación ≥ 80?": {
+      "main": [
+        [
+          {
+            "node": "Usuario Aprobado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Usuario Rechazado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Usuario Aprobado": {
+      "main": [
+        [
+          {
+            "node": "¿Estado = APROBADO?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Usuario Rechazado": {
+      "main": [
+        [
+          {
+            "node": "¿Estado = APROBADO?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Estado = APROBADO?": {
+      "main": [
+        [
+          {
+            "node": "Acciones para Aprobado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Acciones para Rechazado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
