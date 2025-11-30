@@ -1,0 +1,445 @@
+{
+  "name": "05_Switch_Multiples_Rutas",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "notes": "Iniciamos el workflow para demostrar el nodo Switch"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "producto",
+              "value": "Laptop"
+            },
+            {
+              "name": "categoria",
+              "value": "electronica"
+            },
+            {
+              "name": "urgencia",
+              "value": "alta"
+            }
+          ],
+          "number": [
+            {
+              "name": "precio",
+              "value": 1299.99
+            }
+          ]
+        }
+      },
+      "id": "datos-pedido",
+      "name": "Datos del Pedido",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [460, 300],
+      "notes": "Creamos datos de un pedido para demostrar cómo el Switch puede rutear según diferentes criterios"
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{$json.categoria}}",
+        "rules": {
+          "rules": [
+            {
+              "value2": "electronica",
+              "output": 0
+            },
+            {
+              "value2": "ropa",
+              "output": 1
+            },
+            {
+              "value2": "hogar",
+              "output": 2
+            },
+            {
+              "value2": "libros",
+              "output": 3
+            }
+          ]
+        }
+      },
+      "id": "switch-categoria",
+      "name": "Switch por Categoría",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [680, 300],
+      "notes": "El nodo Switch evalúa la categoría del producto y envía el flujo por diferentes rutas según el valor"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "departamento",
+              "value": "Tecnología"
+            },
+            {
+              "name": "procesador",
+              "value": "Equipo especializado en electrónicos"
+            },
+            {
+              "name": "tiempo_estimado",
+              "value": "2-3 días hábiles"
+            }
+          ]
+        }
+      },
+      "id": "procesar-electronica",
+      "name": "Procesar Electrónica",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [900, 120],
+      "notes": "Salida 0: Procesamiento específico para productos electrónicos"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "departamento",
+              "value": "Moda"
+            },
+            {
+              "name": "procesador",
+              "value": "Equipo de tallas y calidad textil"
+            },
+            {
+              "name": "tiempo_estimado",
+              "value": "1-2 días hábiles"
+            }
+          ]
+        }
+      },
+      "id": "procesar-ropa",
+      "name": "Procesar Ropa",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [900, 240],
+      "notes": "Salida 1: Procesamiento específico para ropa y accesorios"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "departamento",
+              "value": "Hogar"
+            },
+            {
+              "name": "procesador",
+              "value": "Equipo de productos para el hogar"
+            },
+            {
+              "name": "tiempo_estimado",
+              "value": "3-5 días hábiles"
+            }
+          ]
+        }
+      },
+      "id": "procesar-hogar",
+      "name": "Procesar Hogar",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [900, 360],
+      "notes": "Salida 2: Procesamiento específico para productos del hogar"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "departamento",
+              "value": "Cultura"
+            },
+            {
+              "name": "procesador",
+              "value": "Equipo de medios y entretenimiento"
+            },
+            {
+              "name": "tiempo_estimado",
+              "value": "1 día hábil"
+            }
+          ]
+        }
+      },
+      "id": "procesar-libros",
+      "name": "Procesar Libros",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [900, 480],
+      "notes": "Salida 3: Procesamiento específico para libros y medios"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "departamento",
+              "value": "General"
+            },
+            {
+              "name": "procesador",
+              "value": "Equipo de procesamiento general"
+            },
+            {
+              "name": "tiempo_estimado",
+              "value": "5-7 días hábiles"
+            }
+          ]
+        }
+      },
+      "id": "procesar-otros",
+      "name": "Procesar Otros",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [900, 600],
+      "notes": "Salida por defecto: Para productos que no coinciden con ninguna categoría específica"
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{$json.urgencia}}",
+        "rules": {
+          "rules": [
+            {
+              "value2": "alta",
+              "output": 0
+            },
+            {
+              "value2": "media",
+              "output": 1
+            },
+            {
+              "value2": "baja",
+              "output": 2
+            }
+          ]
+        }
+      },
+      "id": "switch-urgencia",
+      "name": "Switch por Urgencia",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [1120, 300],
+      "notes": "Segundo Switch que demuestra cómo se pueden encadenar múltiples switches para crear lógica compleja"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "prioridad",
+              "value": "🔴 URGENTE"
+            },
+            {
+              "name": "accion",
+              "value": "Procesar inmediatamente - Notificar al supervisor"
+            }
+          ]
+        }
+      },
+      "id": "urgencia-alta",
+      "name": "Urgencia Alta",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [1340, 180],
+      "notes": "Procesamiento para pedidos de alta urgencia"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "prioridad",
+              "value": "🟡 NORMAL"
+            },
+            {
+              "name": "accion",
+              "value": "Añadir a cola de procesamiento normal"
+            }
+          ]
+        }
+      },
+      "id": "urgencia-media",
+      "name": "Urgencia Media",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [1340, 300],
+      "notes": "Procesamiento para pedidos de urgencia media"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "prioridad",
+              "value": "🟢 BAJA"
+            },
+            {
+              "name": "accion",
+              "value": "Procesar cuando haya capacidad disponible"
+            }
+          ]
+        }
+      },
+      "id": "urgencia-baja",
+      "name": "Urgencia Baja",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [1340, 420],
+      "notes": "Procesamiento para pedidos de baja urgencia"
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Datos del Pedido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Datos del Pedido": {
+      "main": [
+        [
+          {
+            "node": "Switch por Categoría",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch por Categoría": {
+      "main": [
+        [
+          {
+            "node": "Procesar Electrónica",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Procesar Ropa",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Procesar Hogar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Procesar Libros",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Procesar Otros",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar Electrónica": {
+      "main": [
+        [
+          {
+            "node": "Switch por Urgencia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar Ropa": {
+      "main": [
+        [
+          {
+            "node": "Switch por Urgencia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar Hogar": {
+      "main": [
+        [
+          {
+            "node": "Switch por Urgencia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar Libros": {
+      "main": [
+        [
+          {
+            "node": "Switch por Urgencia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar Otros": {
+      "main": [
+        [
+          {
+            "node": "Switch por Urgencia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch por Urgencia": {
+      "main": [
+        [
+          {
+            "node": "Urgencia Alta",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Urgencia Media",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Urgencia Baja",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
