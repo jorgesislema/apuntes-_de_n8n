@@ -1,0 +1,197 @@
+{
+  "name": "03_Programacion_Cron_Ejemplo",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "cron-trigger",
+      "name": "Cron - Lunes a Viernes 9AM",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "notes": "Este nodo se ejecuta automáticamente de lunes a viernes a las 9:00 AM. Perfecto para reportes diarios de trabajo."
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "fecha_actual",
+              "value": "={{ new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }}"
+            },
+            {
+              "name": "hora_actual",
+              "value": "={{ new Date().toLocaleTimeString('es-ES') }}"
+            },
+            {
+              "name": "dia_semana",
+              "value": "={{ new Date().toLocaleDateString('es-ES', { weekday: 'long' }) }}"
+            }
+          ]
+        }
+      },
+      "id": "obtener-fecha",
+      "name": "Obtener Fecha y Hora",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [460, 300],
+      "notes": "Este nodo captura la fecha y hora actuales para incluirlas en el reporte."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.dia_semana}}",
+              "value2": "lunes"
+            }
+          ]
+        }
+      },
+      "id": "es-lunes",
+      "name": "¿Es Lunes?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [680, 300],
+      "notes": "Los lunes tienen un mensaje especial de inicio de semana."
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "mensaje",
+              "value": "🌟 ¡Feliz inicio de semana! Hoy es {{$json.fecha_actual}} y son las {{$json.hora_actual}}. ¡Que tengas una semana productiva!"
+            },
+            {
+              "name": "tipo_mensaje",
+              "value": "inicio_semana"
+            }
+          ]
+        }
+      },
+      "id": "mensaje-lunes",
+      "name": "Mensaje de Lunes",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [900, 180],
+      "notes": "Mensaje especial para motivar el inicio de semana."
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "mensaje",
+              "value": "☀️ ¡Buenos días! Hoy es {{$json.fecha_actual}} y son las {{$json.hora_actual}}. ¡Que tengas un excelente día!"
+            },
+            {
+              "name": "tipo_mensaje",
+              "value": "dia_normal"
+            }
+          ]
+        }
+      },
+      "id": "mensaje-normal",
+      "name": "Mensaje Diario",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [900, 420],
+      "notes": "Mensaje estándar para el resto de días laborales."
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "registro",
+              "value": "=Workflow ejecutado: {{$json.mensaje}}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "id": "registrar-ejecucion",
+      "name": "Registrar Ejecución",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [1120, 300],
+      "notes": "Este nodo registra que el workflow se ejecutó correctamente."
+    }
+  ],
+  "connections": {
+    "Cron - Lunes a Viernes 9AM": {
+      "main": [
+        [
+          {
+            "node": "Obtener Fecha y Hora",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Fecha y Hora": {
+      "main": [
+        [
+          {
+            "node": "¿Es Lunes?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Lunes?": {
+      "main": [
+        [
+          {
+            "node": "Mensaje de Lunes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mensaje Diario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje de Lunes": {
+      "main": [
+        [
+          {
+            "node": "Registrar Ejecución",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje Diario": {
+      "main": [
+        [
+          {
+            "node": "Registrar Ejecución",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
